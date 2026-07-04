@@ -5,6 +5,7 @@ from src.embeddings import create_query_embedding
 from src.retriever import retrieve
 from src.llm import generate_answer
 from src.utils import similarity_score, relevance_label
+from src.source_formatter import format_sources
 
 # Build the RAG pipeline
 chunks, vector_store = build_pipeline()
@@ -56,21 +57,6 @@ Content:
     print(answer)
 
     # Display sources
-    print("\nSources:\n")
+format_sources(results, distances, chunks)
 
-    for rank, (i, distance) in enumerate(
-        zip(results, distances),
-        start=1
-    ):
-
-        print(f"Result {rank}")
-        print(f"File  : {chunks[i]['file']}")
-        print(f"Page  : {chunks[i]['page']}")
-        print(f"Chunk : {chunks[i]['chunk_id']}")
-
-        score = similarity_score(distance)
-        label = relevance_label(score)
-        print(f"Relevance : {score:.1f}% ({label})")
-
-        print("-" * 40)
-    print(f"\nResponse Time: {end-start:.2f} seconds")
+print(f"\nResponse Time: {end-start:.2f} seconds")
