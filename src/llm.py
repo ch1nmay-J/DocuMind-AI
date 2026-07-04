@@ -1,3 +1,5 @@
+from src.prompt_builder import build_prompt
+from src.config import LLM_MODEL
 import os
 from dotenv import load_dotenv
 from google import genai
@@ -13,24 +15,17 @@ client = genai.Client(
 
 def generate_answer(question, context):
 
-    prompt = f"""
-You are a helpful assistant.
+    prompt = build_prompt(question, context)
 
-Answer ONLY using the context below.
+    try:
 
-If the answer is not present in the context, say:
-'I couldn't find that information in the provided document.'
-
-Context:
-{context}
-
-Question:
-{question}
-"""
-
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        response = client.models.generate_content(
+        model=LLM_MODEL,
         contents=prompt,
-    )
+        )
 
-    return response.text
+        return response.text
+
+    except Exception as e:
+
+        return f"Error while generating response:\n{str(e)}"

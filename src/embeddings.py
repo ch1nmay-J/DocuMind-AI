@@ -1,10 +1,15 @@
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from src.config import EMBEDDING_MODEL
+
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 
 def create_embeddings(chunks):
-    return model.encode(chunks)
+    texts = [chunk["text"] for chunk in chunks]
+    embeddings = model.encode(texts)
+    return embeddings
+
 
 def create_query_embedding(query):
     return model.encode(query)

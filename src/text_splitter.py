@@ -1,14 +1,35 @@
-def split_text(text, chunk_size=500, overlap=100):
+from src.config import CHUNK_SIZE, CHUNK_OVERLAP
+def split_text(
+        pages,
+        chunk_size = CHUNK_SIZE,
+        overlap = CHUNK_OVERLAP
+):
+
     chunks = []
 
-    start = 0
+    for page in pages:
 
-    while start < len(text):
-        end = start + chunk_size
+        text = page["text"]
 
-        chunk = text[start:end]
-        chunks.append(chunk)
+        page_number = page["page"]
 
-        start += chunk_size - overlap
+        start = 0
+
+        while start < len(text):
+
+            end = start + chunk_size
+
+            chunk = text[start:end]
+
+            chunks.append(
+                {
+                    "chunk_id": len(chunks) + 1,
+                    "file": page["file"],
+                    "page": page_number,
+                    "text": chunk
+                }
+            )
+
+            start += chunk_size - overlap
 
     return chunks

@@ -1,3 +1,4 @@
+import os
 import faiss
 import numpy as np
 def create_vector_store(embeddings):
@@ -8,3 +9,12 @@ def create_vector_store(embeddings):
     index.add(embeddings)
     
     return index
+
+def save_vector_store(index, filename):
+    faiss.write_index(index, filename)
+
+def load_vector_store(filename):
+    return faiss.read_index(filename)
+
+def vector_store_exists(filename):
+    return os.path.exists(filename)
