@@ -36,3 +36,30 @@ def load_all_pdfs(folder_path):
             all_pages.extend(pages)
 
     return all_pages
+
+def load_uploaded_pdfs(uploaded_files):
+
+    all_pages = []
+
+    for uploaded_file in uploaded_files:
+
+        document = fitz.open(
+            stream=uploaded_file.read(),
+            filetype="pdf"
+        )
+
+        pages = []
+
+        for page_number, page in enumerate(document, start=1):
+
+            pages.append(
+                {
+                    "page": page_number,
+                    "text": page.get_text(),
+                    "file": uploaded_file.name
+                }
+            )
+
+        all_pages.extend(pages)
+
+    return all_pages

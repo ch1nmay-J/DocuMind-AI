@@ -14,7 +14,7 @@ from src.vector_store import (
     )
 
 
-def build_pipeline():
+def build_pipeline(pages):
 
     if cache_exists("chunks.pkl"):
 
@@ -23,8 +23,6 @@ def build_pipeline():
         chunks = load_chunks("chunks.pkl")
 
     else:
-
-        pages = load_all_pdfs("data")
 
         chunks = split_text(pages)
 

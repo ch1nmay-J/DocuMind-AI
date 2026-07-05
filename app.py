@@ -6,9 +6,11 @@ from src.retriever import retrieve
 from src.llm import generate_answer
 from src.utils import similarity_score, relevance_label
 from src.source_formatter import format_sources
+from src.pdf_loader import load_all_pdfs
 
 # Build the RAG pipeline
-chunks, vector_store = build_pipeline()
+pages = load_all_pdfs("data")
+chunks, vector_store = build_pipeline(pages)
 
 while True:
 
