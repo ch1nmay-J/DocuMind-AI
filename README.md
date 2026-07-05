@@ -153,6 +153,42 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### 6. Configure environment variables
+
+Create a `.env` file in the project root and add your Gemini API key:
+
+```env
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+```
+
+### 7. Launch the application
+
+```bash
+streamlit run streamlit_app.py
+```
+
+### 8. Open the application
+
+Once the server starts, open the local URL shown in the terminal (typically `http://localhost:8501`) in your browser.
+
+You can now:
+
+- Upload one or more PDF documents
+- Ask questions about the uploaded documents
+- View AI-generated answers with source citations
+
+---
+
+#  Usage
+
+1. Launch the Streamlit application.
+2. Upload one or more PDF documents.
+3. Enter a question in the input box.
+4. Click **Ask**.
+5. Review the AI-generated answer.
+6. Expand the source section to view the relevant document pages and chunks.
+
+---
 
 #  Project Structure
 
@@ -184,5 +220,5 @@ DocuMind-AI/
 
 ---
 
-#  Installation
+
 
