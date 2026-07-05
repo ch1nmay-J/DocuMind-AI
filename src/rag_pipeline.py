@@ -1,4 +1,4 @@
-from src.cache import (
+from src.cache_utils import (
     save_chunks,
     load_chunks,
     cache_exists
@@ -16,24 +16,24 @@ from src.vector_store import (
 
 def build_pipeline(pages):
 
-    if cache_exists("chunks.pkl"):
+    if cache_exists("cache/chunks.pkl"):
 
         print("Loading cached chunks...")
 
-        chunks = load_chunks("chunks.pkl")
+        chunks = load_chunks("cache/chunks.pkl")
 
     else:
 
         chunks = split_text(pages)
 
-        save_chunks(chunks, "chunks.pkl")
+        save_chunks(chunks, "cache/chunks.pkl")
 
 
-    if vector_store_exists("vector_store.index"):
+    if vector_store_exists("cache/vector_store.index"):
 
         print("Loading cached FAISS index...")
 
-        vector_store = load_vector_store("vector_store.index")
+        vector_store = load_vector_store("cache/vector_store.index")
 
     else:
 
@@ -41,6 +41,6 @@ def build_pipeline(pages):
 
         vector_store = create_vector_store(embeddings)
 
-        save_vector_store(vector_store, "vector_store.index")
+        save_vector_store(vector_store, "cache/vector_store.index")
 
     return chunks, vector_store

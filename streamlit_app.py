@@ -7,7 +7,7 @@ from src.retriever import retrieve
 from src.llm import generate_answer
 
 st.set_page_config(
-    page_title="RAG Document Q&A",
+    page_title="DocuMind AI",
     page_icon="📄",
     layout="wide"
 )
@@ -20,6 +20,12 @@ if "vector_store" not in st.session_state:
 
 if "documents_loaded" not in st.session_state:
     st.session_state.documents_loaded = False
+
+if "document_names" not in st.session_state:
+    st.session_state.document_names = []
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 # ==========================
 # Sidebar
@@ -55,11 +61,65 @@ with st.sidebar:
 
             st.write(f"📄 {file.name}")
 
+    st.divider()
+
+    clear_chat = st.button("🗑️ Clear Chat")
+
+    if clear_chat:
+
+        st.session_state.chat_history = []
+
+        st.success("Chat history cleared!")
+
+    st.divider()
+
+    with st.expander("ℹ️ About"):
+
+        st.write(
+            """
+    This application uses Retrieval-Augmented Generation (RAG)
+    to answer questions from uploaded PDF documents.
+
+    Pipeline:
+
+    PDF → Chunks → Embeddings → FAISS → Gemini
+    """
+        )
+    
+    with st.expander("🛠 Tech Stack"):
+
+        st.markdown("""
+    - Python
+    - Streamlit
+    - LangChain
+    - FAISS
+    - Sentence Transformers
+    - Gemini API
+    - PyMuPDF
+    """)
+
 # ==========================
 # Main Page
 # ==========================
 
-st.title("📄 RAG Document Q&A System")
+st.title("📄 DocuMind AI")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric(
+        "Documents Uploaded",
+        len(uploaded_files) if uploaded_files else 0
+    )
+
+with col2:
+    st.metric(
+        "Questions Asked",
+        len(st.session_state.chat_history)
+    )
+
+st.caption(
+    "Upload PDF documents and ask natural language questions using Retrieval-Augmented Generation (RAG)."
+)
 
 st.write(
     """
@@ -96,7 +156,15 @@ if ask_button:
 
     else:
 
-        if not st.session_state.documents_loaded:
+        current_documents = sorted(
+            [file.name for file in uploaded_files]
+        )
+
+        if (
+            not st.session_state.documents_loaded
+            or
+            current_documents != st.session_state.document_names
+        ):
 
             pages = load_uploaded_pdfs(uploaded_files)
 
@@ -106,6 +174,8 @@ if ask_button:
             st.session_state.vector_store = vector_store
 
             st.session_state.documents_loaded = True
+
+            st.session_state.document_names = current_documents
 
             st.success("Documents indexed successfully!")
 
@@ -156,20 +226,27 @@ Content:
                 question,
                 context
             )
+        
+        st.session_state.chat_history.append(
+            (question, answer)
+        )
 
         # ----------------------
         # Display Answer
         # ----------------------
 
-        st.subheader("💬 Answer")
+        with st.container():
 
-        st.info(answer)
+            st.subheader("💬 Answer")
+
+            st.info(answer)
 
         # ----------------------
         # Display Sources
         # ----------------------
-
-        st.subheader("📚 Sources")
+        with st.container():
+        
+            st.subheader("📚 Sources")
 
         for rank, (index, distance) in enumerate(
             zip(results, distances),
@@ -184,3 +261,27 @@ Content:
                 st.write(f"Distance : {distance:.4f}") 
 
         st.divider()
+
+st.divider()
+
+st.subheader("💬 Chat History")
+
+if not st.session_state.chat_history:
+
+    st.info("No conversation yet. Ask your first question!")
+
+else:
+
+    for q, a in st.session_state.chat_history:
+
+        with st.chat_message("user"):
+            st.write(q)
+
+        with st.chat_message("assistant"):
+            st.write(a)
+
+st.divider()
+
+st.caption(
+    "Built with ❤️ using Streamlit, LangChain, FAISS, Sentence Transformers and Gemini."
+)
