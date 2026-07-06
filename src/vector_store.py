@@ -11,7 +11,9 @@ def create_vector_store(embeddings):
     return index
 
 def save_vector_store(index, filename):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
     faiss.write_index(index, filename)
+    
 
 def load_vector_store(filename):
     return faiss.read_index(filename)
